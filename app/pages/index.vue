@@ -4,6 +4,7 @@
 
     <NumpadModal />
     <ResultModal />
+    <HistoryDrawer />
     <SettingsDrawer />
   </div>
 </template>

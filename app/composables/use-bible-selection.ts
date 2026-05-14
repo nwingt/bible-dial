@@ -11,6 +11,7 @@ export function useBibleSelection() {
   const activeBook = useState<string | null>('bible_dial_book', () => null)
   const inputSegments = useState<string[]>('bible_dial_input_segments', () => [])
   const isSettingsDrawerOpen = useState<boolean>('bible_dial_settings_drawer_open', () => false)
+  const isHistoryDrawerOpen = useState<boolean>('bible_dial_history_drawer_open', () => false)
   const isNumpadModalOpen = useState<boolean>('bible_dial_numpad_modal_open', () => false)
   const isResultModalOpen = useState<boolean>('bible_dial_result_modal_open', () => false)
   const resultURL = useState<string | null>('bible_dial_result_url', () => null)
@@ -158,6 +159,7 @@ export function useBibleSelection() {
     activeBook,
     inputText,
     isSettingsDrawerOpen,
+    isHistoryDrawerOpen,
     isNumpadModalOpen,
     isResultModalOpen,
     resultURL,

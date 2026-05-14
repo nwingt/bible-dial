@@ -163,6 +163,7 @@ const {
 const { buildBibleComURL } = useBibleComURL()
 const { chaptersInBook, versesInChapter, validPrefixSet } = useChapterVerses()
 const { copyURL, shareURL, openURL } = useVerseActions()
+const { record: recordHistory } = useDialHistory()
 const { t, te } = useI18n()
 
 const bookFullLabel = computed(() => {
@@ -283,9 +284,18 @@ function buildResolved() {
   return buildResult(v + inputHint.value)
 }
 
+function commitHistory(r: { url: string, title: string }) {
+  recordHistory({
+    url: r.url,
+    label: r.title,
+    translationId: translationId.value
+  })
+}
+
 function submit() {
   const r = buildResolved()
   if (!r) return
+  commitHistory(r)
   resultURL.value = r.url
   resultLabel.value = r.title
   closeNumpadModal()
@@ -295,6 +305,7 @@ function submit() {
 async function quickShare() {
   const r = buildResolved()
   if (!r) return
+  commitHistory(r)
   await shareURL(r.url, r.title)
   closeNumpadModal()
 }
@@ -302,6 +313,7 @@ async function quickShare() {
 async function quickCopy() {
   const r = buildResolved()
   if (!r) return
+  commitHistory(r)
   await copyURL(r.url)
   closeNumpadModal()
 }
@@ -309,6 +321,7 @@ async function quickCopy() {
 function quickOpen() {
   const r = buildResolved()
   if (!r) return
+  commitHistory(r)
   openURL(r.url)
   closeNumpadModal()
 }
