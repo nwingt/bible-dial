@@ -3,7 +3,10 @@
     v-model:open="isSettingsDrawerOpen"
     side="right"
     :title="$t('settings_title')"
-    :ui="{ content: 'max-w-[320px]' }"
+    :ui="{
+      content: 'max-w-[320px]',
+      header: 'pt-[max(env(safe-area-inset-top),14px)]'
+    }"
   >
     <template #body>
       <div class="flex flex-col gap-6 py-2">
