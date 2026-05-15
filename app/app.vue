@@ -5,6 +5,10 @@
       <main class="flex-1 flex flex-col w-full max-w-app mx-auto px-3 min-h-0">
         <NuxtPage />
       </main>
+      <NumpadModal />
+      <ResultModal />
+      <HistoryDrawer />
+      <SettingsDrawer />
     </div>
   </UApp>
 </template>

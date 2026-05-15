@@ -1,11 +1,6 @@
 <template>
   <div class="flex flex-col flex-1 min-h-0">
     <BookGrid @select="openNumpadModal" />
-
-    <NumpadModal />
-    <ResultModal />
-    <HistoryDrawer />
-    <SettingsDrawer />
   </div>
 </template>
 

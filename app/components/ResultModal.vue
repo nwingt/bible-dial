@@ -5,12 +5,12 @@
     :ui="{
       content: 'rounded-t-2xl max-h-[90dvh] w-full max-w-app mx-auto',
       header: 'py-3',
-      footer: 'grid grid-cols-3 gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
+      footer: footerClass
     }"
   >
     <template #title>
       <div class="flex flex-col gap-0.5">
-        <span v-text="resultLabel" />
+        <span v-text="displayTitle" />
         <span
           v-if="translationLabel"
           class="text-xs font-normal text-muted"
@@ -20,7 +20,37 @@
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-3">
+      <div
+        v-if="isBulkMode"
+        class="flex flex-col gap-4"
+      >
+        <div
+          v-for="(entry, i) in bulkEntryStates"
+          :key="i"
+          class="flex flex-col gap-1"
+        >
+          <span
+            class="text-sm font-semibold text-default"
+            v-text="entry.label"
+          />
+          <div
+            v-if="entry.loading"
+            class="flex flex-col gap-1.5"
+          >
+            <USkeleton class="h-4 w-full" />
+            <USkeleton class="h-4 w-3/4" />
+          </div>
+          <p
+            v-else-if="entry.text"
+            class="text-base text-default leading-relaxed whitespace-pre-line"
+            v-text="entry.text"
+          />
+        </div>
+      </div>
+      <div
+        v-else
+        class="flex flex-col gap-3"
+      >
         <div
           v-if="isScriptureLoading"
           class="flex flex-col gap-2"
@@ -63,6 +93,7 @@
         color="primary"
         variant="solid"
         size="lg"
+        :disabled="isAnyLoading"
         block
         class="h-14 justify-center text-lg font-semibold"
         @click="share"
@@ -73,16 +104,19 @@
         color="primary"
         variant="solid"
         size="lg"
+        :disabled="isAnyLoading"
         block
         class="h-14 justify-center text-lg font-semibold"
         @click="copy"
       />
       <UButton
+        v-if="!isBulkMode"
         icon="i-lucide-external-link"
         :label="$t('result_open')"
         color="primary"
         variant="solid"
         size="lg"
+        :disabled="isAnyLoading"
         block
         class="h-14 justify-center text-lg font-semibold"
         @click="open"
@@ -94,45 +128,101 @@
 <script setup lang="ts">
 import { TRANSLATIONS } from '~/constants/translations'
 
+interface BulkEntryState {
+  label: string
+  text: string
+  loading: boolean
+}
+
 const {
   isResultModalOpen,
   resultURL,
   resultLabel,
+  bulkResultEntries,
   translationId,
   showVerseNumbers
 } = useBibleSelection()
 
 const { copyURL, shareURL, openURL } = useVerseActions()
+const { t: $t } = useI18n()
+
+const isBulkMode = computed(() => bulkResultEntries.value.length > 0)
 
 const translationLabel = computed(() => {
   const tr = TRANSLATIONS.find(x => x.id === translationId.value)
   return tr ? getTranslationLabel(tr) : ''
 })
 
+const displayTitle = computed(() => (
+  isBulkMode.value
+    ? $t('bulk_result_title', { count: bulkResultEntries.value.length })
+    : (resultLabel.value ?? '')
+))
+
+const footerClass = computed(() => (
+  isBulkMode.value
+    ? 'grid grid-cols-2 gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
+    : 'grid grid-cols-3 gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
+))
+
 const scripture = ref('')
 const isScriptureLoading = ref(false)
+const bulkEntryStates = ref<BulkEntryState[]>([])
 let activeFetchToken = 0
 
+const isAnyLoading = computed(() => (
+  isScriptureLoading.value
+  || bulkEntryStates.value.some(e => e.loading)
+))
+
+async function fetchEntry(url: string, withVerses: boolean): Promise<string> {
+  try {
+    const data = await $fetch<{ description: string | null }>('/api/scripture', {
+      query: { url, mode: withVerses ? 'verses' : 'meta' }
+    })
+    return data.description ?? ''
+  } catch {
+    return ''
+  }
+}
+
 watch(
-  () => [isResultModalOpen.value, resultURL.value, showVerseNumbers.value] as const,
-  async ([open, url, withVerses]) => {
+  () => [
+    isResultModalOpen.value,
+    resultURL.value,
+    bulkResultEntries.value,
+    showVerseNumbers.value
+  ] as const,
+  ([open, url, bulk, withVerses]) => {
     const token = ++activeFetchToken
     scripture.value = ''
     isScriptureLoading.value = false
-    if (!open || !url) return
-    isScriptureLoading.value = true
-    try {
-      const data = await $fetch<{ description: string | null }>('/api/scripture', {
-        query: { url, mode: withVerses ? 'verses' : 'meta' }
+    bulkEntryStates.value = []
+    if (!open) return
+
+    if (bulk.length > 0) {
+      bulkEntryStates.value = bulk.map(b => ({ label: b.label, text: '', loading: true }))
+      bulk.forEach((entry, i) => {
+        fetchEntry(entry.url, withVerses).then((text) => {
+          if (token !== activeFetchToken) return
+          const state = bulkEntryStates.value[i]
+          if (!state) return
+          state.text = text
+          state.loading = false
+        })
       })
-      if (token === activeFetchToken) {
-        scripture.value = data.description ?? ''
-      }
-    } catch {
-      // silent fallback to URL-only
-    } finally {
-      if (token === activeFetchToken) isScriptureLoading.value = false
+      return
     }
+
+    if (!url) return
+    isScriptureLoading.value = true
+    fetchEntry(url, withVerses)
+      .then((text) => {
+        if (token === activeFetchToken) scripture.value = text
+      })
+      .finally(() => {
+        if (token === activeFetchToken) isScriptureLoading.value = false
+      })
   }
 )
 
@@ -145,6 +235,11 @@ async function copyURLOnly() {
 }
 
 function buildShareText() {
+  if (isBulkMode.value) {
+    return bulkEntryStates.value
+      .map(e => (e.text ? `${e.label}\n${e.text}` : e.label))
+      .join('\n\n')
+  }
   if (!resultURL.value) return ''
   const parts: string[] = []
   if (resultLabel.value) parts.push(resultLabel.value)
@@ -154,8 +249,11 @@ function buildShareText() {
 }
 
 async function share() {
-  if (!resultURL.value) return
-  await shareURL(resultURL.value, resultLabel.value ?? '', buildShareText())
+  const text = buildShareText()
+  if (!text) return
+  const url = isBulkMode.value ? '' : (resultURL.value ?? '')
+  const title = isBulkMode.value ? displayTitle.value : (resultLabel.value ?? '')
+  await shareURL(url, title, text)
 }
 async function copy() {
   const text = buildShareText()

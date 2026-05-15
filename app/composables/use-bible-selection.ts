@@ -16,6 +16,10 @@ export function useBibleSelection() {
   const isResultModalOpen = useState<boolean>('bible_dial_result_modal_open', () => false)
   const resultURL = useState<string | null>('bible_dial_result_url', () => null)
   const resultLabel = useState<string | null>('bible_dial_result_label', () => null)
+  const bulkResultEntries = useState<Array<{ url: string, label: string }>>(
+    'bible_dial_bulk_result_entries',
+    () => []
+  )
 
   const translationId = useCookie<number>('bible_dial_translation', {
     default: () => DEFAULT_TRANSLATION_ID,
@@ -170,6 +174,7 @@ export function useBibleSelection() {
     isResultModalOpen,
     resultURL,
     resultLabel,
+    bulkResultEntries,
     translationId,
     quickMode,
     showVerseNumbers,

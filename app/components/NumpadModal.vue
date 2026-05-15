@@ -152,6 +152,7 @@ const {
   quickMode,
   resultURL,
   resultLabel,
+  bulkResultEntries,
   closeNumpadModal,
   appendDigit,
   appendColon,
@@ -296,6 +297,7 @@ function submit() {
   const r = buildResolved()
   if (!r) return
   commitHistory(r)
+  bulkResultEntries.value = []
   resultURL.value = r.url
   resultLabel.value = r.title
   closeNumpadModal()

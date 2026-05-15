@@ -84,7 +84,8 @@ const {
   isHistoryDrawerOpen,
   isResultModalOpen,
   resultURL,
-  resultLabel
+  resultLabel,
+  bulkResultEntries
 } = useBibleSelection()
 const { entries, remove, clear } = useDialHistory()
 
@@ -94,6 +95,7 @@ function translationLabel(id: number) {
 }
 
 function openEntry(entry: DialHistoryEntry) {
+  bulkResultEntries.value = []
   resultURL.value = entry.url
   resultLabel.value = entry.label
   isHistoryDrawerOpen.value = false
