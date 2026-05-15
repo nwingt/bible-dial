@@ -7,7 +7,7 @@ export const BOOK_CATEGORIES = {
   gospels: { testament: 'new', books: ['MAT', 'MRK', 'LUK', 'JHN'] },
   ntHistory: { testament: 'new', books: ['ACT'] },
   pauline: { testament: 'new', books: ['ROM', '1CO', '2CO', 'GAL', 'EPH', 'PHP', 'COL', '1TH', '2TH', '1TI', '2TI', 'TIT', 'PHM'] },
-  general: { testament: 'new', books: ['HEB', 'JAS', '1PE', '2PE', '1JO', '2JO', '3JO', 'JUD'] },
+  general: { testament: 'new', books: ['HEB', 'JAS', '1PE', '2PE', '1JN', '2JN', '3JN', 'JUD'] },
   prophecy: { testament: 'new', books: ['REV'] }
 } as const
 
