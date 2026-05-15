@@ -7,6 +7,7 @@
       </main>
       <NumpadModal />
       <ResultModal />
+      <PPTExportModal />
       <HistoryDrawer />
       <SettingsDrawer />
     </div>

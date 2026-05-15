@@ -5,6 +5,12 @@ const VALID_INPUT = /^\d{1,3}(:(\d{1,3}(-\d{1,3})?)?)?$/
 const SEGMENT_SEPARATORS = [':', '-']
 const DIGITS = '0123456789'
 
+export interface BulkEntryState {
+  label: string
+  text: string
+  loading: boolean
+}
+
 export function useBibleSelection() {
   const { chaptersInBook, versesInChapter, validPrefixSet } = useChapterVerses()
 
@@ -20,6 +26,11 @@ export function useBibleSelection() {
     'bible_dial_bulk_result_entries',
     () => []
   )
+  const bulkEntryStates = useState<BulkEntryState[]>(
+    'bible_dial_bulk_entry_states',
+    () => []
+  )
+  const isPPTModalOpen = useState<boolean>('bible_dial_ppt_modal_open', () => false)
 
   const translationId = useCookie<number>('bible_dial_translation', {
     default: () => DEFAULT_TRANSLATION_ID,
@@ -172,9 +183,11 @@ export function useBibleSelection() {
     isHistoryDrawerOpen,
     isNumpadModalOpen,
     isResultModalOpen,
+    isPPTModalOpen,
     resultURL,
     resultLabel,
     bulkResultEntries,
+    bulkEntryStates,
     translationId,
     quickMode,
     showVerseNumbers,

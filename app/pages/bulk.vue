@@ -10,7 +10,7 @@
         :label="$t('bulk_confirm')"
         color="primary"
         variant="solid"
-        size="sm"
+        size="lg"
         :disabled="!text.trim()"
         @click="submit"
       />

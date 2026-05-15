@@ -94,8 +94,7 @@
         variant="solid"
         size="lg"
         :disabled="isAnyLoading"
-        block
-        class="h-14 justify-center text-lg font-semibold"
+        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
         @click="share"
       />
       <UButton
@@ -105,20 +104,29 @@
         variant="solid"
         size="lg"
         :disabled="isAnyLoading"
-        block
-        class="h-14 justify-center text-lg font-semibold"
+        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
         @click="copy"
       />
       <UButton
-        v-if="!isBulkMode"
+        v-if="isBulkMode"
+        icon="i-lucide-presentation"
+        :label="$t('result_ppt')"
+        color="primary"
+        variant="solid"
+        size="lg"
+        :disabled="isAnyLoading"
+        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
+        @click="openPPT"
+      />
+      <UButton
+        v-else
         icon="i-lucide-external-link"
         :label="$t('result_open')"
         color="primary"
         variant="solid"
         size="lg"
         :disabled="isAnyLoading"
-        block
-        class="h-14 justify-center text-lg font-semibold"
+        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
         @click="open"
       />
     </template>
@@ -128,17 +136,13 @@
 <script setup lang="ts">
 import { TRANSLATIONS } from '~/constants/translations'
 
-interface BulkEntryState {
-  label: string
-  text: string
-  loading: boolean
-}
-
 const {
   isResultModalOpen,
+  isPPTModalOpen,
   resultURL,
   resultLabel,
   bulkResultEntries,
+  bulkEntryStates,
   translationId,
   showVerseNumbers
 } = useBibleSelection()
@@ -159,15 +163,10 @@ const displayTitle = computed(() => (
     : (resultLabel.value ?? '')
 ))
 
-const footerClass = computed(() => (
-  isBulkMode.value
-    ? 'grid grid-cols-2 gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
-    : 'grid grid-cols-3 gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
-))
+const footerClass = 'flex gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
 
 const scripture = ref('')
 const isScriptureLoading = ref(false)
-const bulkEntryStates = ref<BulkEntryState[]>([])
 let activeFetchToken = 0
 
 const isAnyLoading = computed(() => (
@@ -263,5 +262,8 @@ function open() {
   if (!resultURL.value) return
   openURL(resultURL.value)
   isResultModalOpen.value = false
+}
+function openPPT() {
+  isPPTModalOpen.value = true
 }
 </script>
