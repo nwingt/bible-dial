@@ -141,6 +141,7 @@ function assembleVerses(
     items.push({ n, texts })
   }
   items.sort((a, b) => a.n - b.n)
+  if (items.length === 1) return items[0]!.texts.join(' ')
   return items.map(({ n, texts }) => `${n} ${texts.join(' ')}`).join(' ')
 }
 
