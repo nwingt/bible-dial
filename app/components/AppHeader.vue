@@ -15,7 +15,7 @@
         icon="i-lucide-history"
         color="neutral"
         variant="ghost"
-        size="md"
+        size="lg"
         :aria-label="$t('history_title')"
         @click="isHistoryDrawerOpen = true"
       />
@@ -27,7 +27,7 @@
           icon="i-lucide-menu"
           color="neutral"
           variant="ghost"
-          size="md"
+          size="lg"
           :aria-label="$t('menu_open')"
         />
       </UDropdownMenu>
