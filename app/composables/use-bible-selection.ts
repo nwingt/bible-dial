@@ -29,6 +29,12 @@ export function useBibleSelection() {
     sameSite: 'lax'
   })
 
+  const showVerseNumbers = useCookie<boolean>('bible_dial_verse_numbers', {
+    default: () => false,
+    watch: true,
+    sameSite: 'lax'
+  })
+
   const inputText = computed(() =>
     inputSegments.value
       .map((seg, i) => (i === 0 ? seg : SEGMENT_SEPARATORS[i - 1] + seg))
@@ -166,6 +172,7 @@ export function useBibleSelection() {
     resultLabel,
     translationId,
     quickMode,
+    showVerseNumbers,
     openNumpadModal,
     closeNumpadModal,
     appendDigit,

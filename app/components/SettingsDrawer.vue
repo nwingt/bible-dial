@@ -39,6 +39,13 @@
         </UFormField>
 
         <UFormField
+          :label="$t('settings_verse_numbers')"
+          size="lg"
+        >
+          <USwitch v-model="showVerseNumbers" />
+        </UFormField>
+
+        <UFormField
           :label="$t('settings_color_mode')"
           size="lg"
         >
@@ -52,7 +59,7 @@
 <script setup lang="ts">
 import { TRANSLATIONS } from '~/constants/translations'
 
-const { isSettingsDrawerOpen, translationId, quickMode } = useBibleSelection()
+const { isSettingsDrawerOpen, translationId, quickMode, showVerseNumbers } = useBibleSelection()
 const { locale, locales, setLocale } = useI18n()
 
 const translationItems = computed(() =>

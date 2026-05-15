@@ -98,7 +98,8 @@ const {
   isResultModalOpen,
   resultURL,
   resultLabel,
-  translationId
+  translationId,
+  showVerseNumbers
 } = useBibleSelection()
 
 const { copyURL, shareURL, openURL } = useVerseActions()
@@ -113,8 +114,8 @@ const isScriptureLoading = ref(false)
 let activeFetchToken = 0
 
 watch(
-  () => [isResultModalOpen.value, resultURL.value] as const,
-  async ([open, url]) => {
+  () => [isResultModalOpen.value, resultURL.value, showVerseNumbers.value] as const,
+  async ([open, url, withVerses]) => {
     const token = ++activeFetchToken
     scripture.value = ''
     isScriptureLoading.value = false
@@ -122,7 +123,7 @@ watch(
     isScriptureLoading.value = true
     try {
       const data = await $fetch<{ description: string | null }>('/api/scripture', {
-        query: { url }
+        query: { url, mode: withVerses ? 'verses' : 'meta' }
       })
       if (token === activeFetchToken) {
         scripture.value = data.description ?? ''
