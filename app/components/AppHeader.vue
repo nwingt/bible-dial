@@ -11,6 +11,7 @@
     </NuxtLink>
     <div class="flex items-center gap-1">
       <UButton
+        v-if="getRouteBaseName(route) === 'index'"
         icon="i-lucide-history"
         color="neutral"
         variant="ghost"
@@ -37,6 +38,8 @@
 <script setup lang="ts">
 const { isSettingsDrawerOpen, isHistoryDrawerOpen } = useBibleSelection()
 const { t: $t } = useI18n()
+const route = useRoute()
+const getRouteBaseName = useRouteBaseName()
 
 const menuItems = computed(() => [
   {
