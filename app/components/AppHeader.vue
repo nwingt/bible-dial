@@ -43,6 +43,11 @@ const getRouteBaseName = useRouteBaseName()
 
 const menuItems = computed(() => [
   {
+    label: $t('index_title'),
+    icon: 'i-lucide-book-open',
+    to: '/'
+  },
+  {
     label: $t('bulk_title'),
     icon: 'i-lucide-list',
     to: '/bulk'
