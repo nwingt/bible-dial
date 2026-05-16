@@ -1,54 +1,15 @@
-import { DEFAULT_TRANSLATION_ID } from '~/constants/translations'
 import { CHAPTER_VERSES } from '~/constants/chapter-verses'
 
 const VALID_INPUT = /^\d{1,3}(:(\d{1,3}(-\d{1,3})?)?)?$/
 const SEGMENT_SEPARATORS = [':', '-']
 const DIGITS = '0123456789'
 
-export interface BulkEntryState {
-  label: string
-  text: string
-  loading: boolean
-}
-
-export function useBibleSelection() {
+export function useBibleInput() {
   const { chaptersInBook, versesInChapter, validPrefixSet } = useChapterVerses()
 
   const activeBook = useState<string | null>('bible_dial_book', () => null)
   const inputSegments = useState<string[]>('bible_dial_input_segments', () => [])
-  const isSettingsDrawerOpen = useState<boolean>('bible_dial_settings_drawer_open', () => false)
-  const isHistoryDrawerOpen = useState<boolean>('bible_dial_history_drawer_open', () => false)
   const isNumpadModalOpen = useState<boolean>('bible_dial_numpad_modal_open', () => false)
-  const isResultModalOpen = useState<boolean>('bible_dial_result_modal_open', () => false)
-  const resultURL = useState<string | null>('bible_dial_result_url', () => null)
-  const resultLabel = useState<string | null>('bible_dial_result_label', () => null)
-  const bulkResultEntries = useState<Array<{ url: string, label: string }>>(
-    'bible_dial_bulk_result_entries',
-    () => []
-  )
-  const bulkEntryStates = useState<BulkEntryState[]>(
-    'bible_dial_bulk_entry_states',
-    () => []
-  )
-  const isPPTModalOpen = useState<boolean>('bible_dial_ppt_modal_open', () => false)
-
-  const translationId = useCookie<number>('bible_dial_translation', {
-    default: () => DEFAULT_TRANSLATION_ID,
-    watch: true,
-    sameSite: 'lax'
-  })
-
-  const quickMode = useCookie<boolean>('bible_dial_quick_mode', {
-    default: () => false,
-    watch: true,
-    sameSite: 'lax'
-  })
-
-  const showVerseNumbers = useCookie<boolean>('bible_dial_verse_numbers', {
-    default: () => false,
-    watch: true,
-    sameSite: 'lax'
-  })
 
   const inputText = computed(() =>
     inputSegments.value
@@ -179,18 +140,7 @@ export function useBibleSelection() {
   return {
     activeBook,
     inputText,
-    isSettingsDrawerOpen,
-    isHistoryDrawerOpen,
     isNumpadModalOpen,
-    isResultModalOpen,
-    isPPTModalOpen,
-    resultURL,
-    resultLabel,
-    bulkResultEntries,
-    bulkEntryStates,
-    translationId,
-    quickMode,
-    showVerseNumbers,
     openNumpadModal,
     closeNumpadModal,
     appendDigit,

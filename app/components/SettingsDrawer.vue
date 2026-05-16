@@ -62,7 +62,8 @@
 <script setup lang="ts">
 import { TRANSLATIONS } from '~/constants/translations'
 
-const { isSettingsDrawerOpen, translationId, quickMode, showVerseNumbers } = useBibleSelection()
+const { isSettingsDrawerOpen } = useAppState()
+const { translationId, quickMode, showVerseNumbers } = useSettings()
 const { locale, locales, setLocale } = useI18n()
 
 const translationItems = computed(() =>

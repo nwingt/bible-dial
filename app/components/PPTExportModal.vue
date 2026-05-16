@@ -120,7 +120,7 @@
 <script setup lang="ts">
 type BgType = 'none' | 'upload'
 
-const { isPPTModalOpen, bulkEntryStates } = useBibleSelection()
+const { isPPTModalOpen, bulkEntryStates } = useAppState()
 const { generate } = usePPTExport()
 const { t: $t } = useI18n()
 const toast = useToast()

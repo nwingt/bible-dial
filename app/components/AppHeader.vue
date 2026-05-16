@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-const { isSettingsDrawerOpen, isHistoryDrawerOpen } = useBibleSelection()
+const { isSettingsDrawerOpen, isHistoryDrawerOpen } = useAppState()
 const { t: $t } = useI18n()
 const route = useRoute()
 const getRouteBaseName = useRouteBaseName()

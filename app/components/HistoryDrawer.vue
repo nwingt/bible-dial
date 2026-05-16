@@ -86,7 +86,7 @@ const {
   resultURL,
   resultLabel,
   bulkResultEntries
-} = useBibleSelection()
+} = useAppState()
 const { entries, remove, clear } = useDialHistory()
 
 function translationLabel(id: number) {

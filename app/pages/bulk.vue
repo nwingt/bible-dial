@@ -35,9 +35,9 @@ const {
   bulkResultEntries,
   isResultModalOpen,
   resultURL,
-  resultLabel,
-  translationId
-} = useBibleSelection()
+  resultLabel
+} = useAppState()
+const { translationId } = useSettings()
 const { parse } = useBulkParser()
 const toast = useToast()
 const { t } = useI18n()

@@ -142,10 +142,9 @@ const {
   resultURL,
   resultLabel,
   bulkResultEntries,
-  bulkEntryStates,
-  translationId,
-  showVerseNumbers
-} = useBibleSelection()
+  bulkEntryStates
+} = useAppState()
+const { translationId, showVerseNumbers } = useSettings()
 
 const { copyURL, shareURL, openURL } = useVerseActions()
 const { t: $t } = useI18n()

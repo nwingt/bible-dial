@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-const { openNumpadModal } = useBibleSelection()
+const { openNumpadModal } = useBibleInput()
 </script>

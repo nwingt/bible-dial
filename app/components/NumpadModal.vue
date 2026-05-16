@@ -147,19 +147,20 @@ const {
   activeBook,
   inputText,
   isNumpadModalOpen,
-  isResultModalOpen,
-  translationId,
-  quickMode,
-  resultURL,
-  resultLabel,
-  bulkResultEntries,
   closeNumpadModal,
   appendDigit,
   appendColon,
   appendDash,
   backspace,
   isInputValid
-} = useBibleSelection()
+} = useBibleInput()
+const {
+  isResultModalOpen,
+  resultURL,
+  resultLabel,
+  bulkResultEntries
+} = useAppState()
+const { translationId, quickMode } = useSettings()
 
 const { buildBibleComURL } = useBibleComURL()
 const { chaptersInBook, versesInChapter, validPrefixSet } = useChapterVerses()
