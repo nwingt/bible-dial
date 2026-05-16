@@ -1,20 +1,9 @@
 <template>
   <div class="flex flex-col flex-1 min-h-0 gap-3 py-3">
-    <div class="flex items-center justify-between gap-2">
-      <h2
-        class="text-lg font-semibold text-default"
-        v-text="$t('bulk_title')"
-      />
-      <UButton
-        icon="i-lucide-corner-down-left"
-        :label="$t('bulk_confirm')"
-        color="primary"
-        variant="solid"
-        size="lg"
-        :disabled="!text.trim()"
-        @click="submit"
-      />
-    </div>
+    <h2
+      class="text-lg font-semibold text-default"
+      v-text="$t('bulk_title')"
+    />
     <UTextarea
       v-model="text"
       :placeholder="$t('bulk_placeholder')"
@@ -22,10 +11,21 @@
       autofocus
       :autofocus-delay="200"
       autoresize
-      :rows="6"
+      :rows="5"
       :maxrows="0"
       class="w-full"
-      :ui="{ base: 'font-mono text-sm leading-relaxed p-0 hover:bg-transparent focus:bg-transparent' }"
+      :ui="{ base: 'font-mono text-xl md:text-2xl leading-relaxed p-0 hover:bg-transparent focus:bg-transparent' }"
+    />
+    <UButton
+      icon="i-lucide-corner-down-left"
+      :label="$t('bulk_confirm')"
+      color="primary"
+      variant="solid"
+      size="xl"
+      :disabled="!text.trim()"
+      block
+      class="h-14 justify-center text-lg font-semibold"
+      @click="submit"
     />
   </div>
 </template>

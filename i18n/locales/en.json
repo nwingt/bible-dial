@@ -135,7 +135,7 @@
   "book_name_zep": "Zephaniah",
   "bulk_confirm": "Confirm",
   "bulk_empty": "No verses recognized",
-  "bulk_placeholder": "John 3:16\n1 John 2:15-17, 5:4-5\nRom 12:2\nMatt 6:31-33",
+  "bulk_placeholder": "Please input, for example:\nJohn 3:16\n1 John 2:15-17, 5:4-5\nRom 12:2\nMatt 6:31-33",
   "bulk_result_title": "{count} verses",
   "bulk_title": "Multiple verses",
   "history_clear": "Clear history",
