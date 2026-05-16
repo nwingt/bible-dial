@@ -5,7 +5,7 @@
     :title="$t('history_title')"
     :ui="{
       content: 'max-w-[320px]',
-      header: 'pt-[max(env(safe-area-inset-top),14px)]',
+      header: 'relative mt-[max(env(safe-area-inset-top),14px)]',
       title: 'flex items-center gap-1',
       body: '!p-0'
     }"
