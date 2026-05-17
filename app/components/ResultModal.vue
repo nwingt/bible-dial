@@ -198,7 +198,12 @@ watch(
     if (!open) return
 
     if (bulk.length > 0) {
-      bulkEntryStates.value = bulk.map(b => ({ label: b.label, verses: [], loading: true }))
+      bulkEntryStates.value = bulk.map(b => ({
+        label: b.label,
+        url: b.url,
+        verses: [],
+        loading: true
+      }))
       bulk.forEach((entry, i) => {
         fetchEntry(entry.url).then((fetched) => {
           if (token !== activeFetchToken) return
@@ -236,7 +241,9 @@ function buildShareText() {
     return bulkEntryStates.value
       .map((e) => {
         const text = formatVerses(e.verses, isVerseNumbersShown.value)
-        return text ? `${e.label}\n${text}` : e.label
+        const lines = text ? [e.label, text] : [e.label]
+        lines.push(e.url)
+        return lines.join('\n')
       })
       .join('\n\n')
   }
@@ -252,7 +259,7 @@ async function share() {
   const text = buildShareText()
   if (!text) return
   const url = isBulkMode.value ? '' : (resultURL.value ?? '')
-  const title = isBulkMode.value ? displayTitle.value : (resultLabel.value ?? '')
+  const title = isBulkMode.value ? '' : (resultLabel.value ?? '')
   await shareURL(url, title, text)
 }
 async function copy() {

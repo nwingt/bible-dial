@@ -1,5 +1,6 @@
 export interface BulkEntryState {
   label: string
+  url: string
   verses: Verse[]
   loading: boolean
 }

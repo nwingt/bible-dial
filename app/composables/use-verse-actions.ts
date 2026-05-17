@@ -22,7 +22,9 @@ export function useVerseActions() {
   async function shareURL(url: string, title: string, text?: string) {
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title, text, url })
+        const data: ShareData = { title, text }
+        if (url) data.url = url
+        await navigator.share(data)
       } catch {
         // user cancelled — ignore
       }
