@@ -14,7 +14,7 @@ export function useSettings() {
   })
 
   const isVerseNumbersShown = useCookie<boolean>('bible_dial_verse_numbers', {
-    default: () => false,
+    default: () => true,
     watch: true,
     sameSite: 'lax'
   })
