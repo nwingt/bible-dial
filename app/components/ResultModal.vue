@@ -5,7 +5,8 @@
     :ui="{
       content: 'rounded-t-2xl max-h-[90dvh] w-full max-w-app mx-auto',
       header: 'py-3',
-      footer: footerClass
+      body: 'p-0 sm:p-0',
+      footer: 'flex flex-col items-stretch gap-3 pb-[max(env(safe-area-inset-bottom),16px)]'
     }"
   >
     <template #title>
@@ -22,7 +23,7 @@
     <template #body>
       <div
         v-if="isBulkMode"
-        class="flex flex-col gap-4"
+        class="flex flex-col gap-4 p-4 sm:p-6"
       >
         <div
           v-for="(entry, i) in bulkEntryStates"
@@ -48,7 +49,7 @@
       </div>
       <div
         v-else
-        class="flex flex-col gap-3"
+        class="flex flex-col gap-3 p-4 sm:p-6"
       >
         <div
           v-if="isScriptureLoading"
@@ -62,71 +63,81 @@
           v-else-if="verses.length"
           :verses="verses"
         />
-        <UInput
-          :model-value="resultURL ?? ''"
-          size="sm"
-          :ui="{ base: 'text-xs font-mono pr-10' }"
-          readonly
-          class="w-full"
-          @focus="selectAll"
-        >
-          <template #trailing>
-            <UButton
-              icon="i-lucide-copy"
-              :aria-label="$t('result_copy')"
-              color="neutral"
-              variant="link"
-              size="xs"
-              @click="copyURLOnly"
-            />
-          </template>
-        </UInput>
       </div>
     </template>
 
     <template #footer>
-      <UButton
-        icon="i-lucide-share-2"
-        :label="$t('result_share')"
-        color="primary"
-        variant="solid"
-        size="lg"
-        :disabled="isAnyLoading"
-        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
-        @click="share"
-      />
-      <UButton
-        icon="i-lucide-copy"
-        :label="$t('result_copy')"
-        color="primary"
-        variant="solid"
-        size="lg"
-        :disabled="isAnyLoading"
-        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
-        @click="copy"
-      />
-      <UButton
-        v-if="isBulkMode"
-        icon="i-lucide-presentation"
-        :label="$t('result_ppt')"
-        color="primary"
-        variant="solid"
-        size="lg"
-        :disabled="isAnyLoading"
-        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
-        @click="openPPT"
-      />
-      <UButton
-        v-else
-        icon="i-lucide-external-link"
-        :label="$t('result_open')"
-        color="primary"
-        variant="solid"
-        size="lg"
-        :disabled="isAnyLoading"
-        class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
-        @click="open"
-      />
+      <div class="flex items-center justify-between">
+        <span
+          class="text-sm font-medium text-default"
+          v-text="$t('settings_verse_numbers')"
+        />
+        <USwitch v-model="isVerseNumbersShown" />
+      </div>
+      <UInput
+        v-if="!isBulkMode"
+        :model-value="resultURL ?? ''"
+        size="sm"
+        :ui="{ base: 'text-xs font-mono pr-10' }"
+        readonly
+        class="w-full"
+        @focus="selectAll"
+      >
+        <template #trailing>
+          <UButton
+            icon="i-lucide-copy"
+            :aria-label="$t('result_copy')"
+            color="neutral"
+            variant="link"
+            size="xs"
+            @click="copyURLOnly"
+          />
+        </template>
+      </UInput>
+      <div class="flex gap-2">
+        <UButton
+          icon="i-lucide-share-2"
+          :label="$t('result_share')"
+          color="primary"
+          variant="solid"
+          size="lg"
+          :disabled="isAnyLoading"
+          class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
+          @click="share"
+        />
+        <UButton
+          icon="i-lucide-copy"
+          :label="$t('result_copy')"
+          color="primary"
+          variant="solid"
+          size="lg"
+          :disabled="isAnyLoading"
+          class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
+          @click="copy"
+        />
+        <UButton
+          v-if="isBulkMode"
+          icon="i-lucide-presentation"
+          :label="$t('result_ppt')"
+          color="primary"
+          variant="solid"
+          size="lg"
+          :disabled="isAnyLoading"
+          class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
+          @click="openPPT"
+        />
+        <UButton
+          v-else
+          icon="i-lucide-external-link"
+          :label="$t('result_open')"
+          color="primary"
+          variant="solid"
+          size="lg"
+          :disabled="isAnyLoading"
+          class="flex-1 min-w-0 h-14 justify-center text-lg font-semibold"
+          @click="open"
+        />
+      </div>
     </template>
   </USlideover>
 </template>
@@ -159,8 +170,6 @@ const displayTitle = computed(() => (
     ? $t('bulk_result_title', { count: bulkResultEntries.value.length })
     : (resultLabel.value ?? '')
 ))
-
-const footerClass = 'flex gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
 
 const verses = ref<Verse[]>([])
 const isScriptureLoading = ref(false)
