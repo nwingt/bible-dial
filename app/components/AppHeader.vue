@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex items-center justify-between w-full min-h-10 px-3 pb-2 border-b border-default"
+    class="sticky top-0 z-30 flex items-center justify-between w-full min-h-10 px-3 pb-2 border-b border-default bg-default"
     :style="{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }"
   >
     <NuxtLink
