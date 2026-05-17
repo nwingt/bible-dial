@@ -121,6 +121,7 @@
 type BgType = 'none' | 'upload'
 
 const { isPPTModalOpen, bulkEntryStates } = useAppState()
+const { isVerseNumbersShown } = useSettings()
 const { generate } = usePPTExport()
 const { t: $t } = useI18n()
 const toast = useToast()
@@ -131,7 +132,9 @@ const textColor = ref<string>('#FFFFFF')
 const generating = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 
-const hasReadyEntries = computed(() => bulkEntryStates.value.some(e => !e.loading && e.text))
+const hasReadyEntries = computed(() => (
+  bulkEntryStates.value.some(e => !e.loading && (e.verses.length > 0))
+))
 
 function bgTileClass(type: BgType) {
   const base = 'relative shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-elevated border border-default transition-all'
@@ -168,8 +171,8 @@ function onFileChange(e: Event) {
 async function onGenerate() {
   if (generating.value) return
   const entries = bulkEntryStates.value
-    .filter(e => !e.loading && e.text)
-    .map(e => ({ label: e.label, text: e.text }))
+    .filter(e => !e.loading && (e.verses.length > 0))
+    .map(e => ({ label: e.label, text: formatVerses(e.verses, isVerseNumbersShown.value) }))
   if (entries.length === 0) return
 
   const src = ((selectedType.value === 'upload') && uploadedSrc.value)

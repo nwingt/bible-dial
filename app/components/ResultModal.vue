@@ -40,10 +40,9 @@
             <USkeleton class="h-4 w-full" />
             <USkeleton class="h-4 w-3/4" />
           </div>
-          <p
-            v-else-if="entry.text"
-            class="text-base text-default leading-relaxed whitespace-pre-line"
-            v-text="entry.text"
+          <VerseText
+            v-else-if="entry.verses.length"
+            :verses="entry.verses"
           />
         </div>
       </div>
@@ -59,10 +58,9 @@
           <USkeleton class="h-5 w-full" />
           <USkeleton class="h-5 w-3/4" />
         </div>
-        <p
-          v-else-if="scripture"
-          class="text-base text-default leading-relaxed whitespace-pre-line"
-          v-text="scripture"
+        <VerseText
+          v-else-if="verses.length"
+          :verses="verses"
         />
         <UInput
           :model-value="resultURL ?? ''"
@@ -164,23 +162,25 @@ const displayTitle = computed(() => (
 
 const footerClass = 'flex gap-2 pb-[max(env(safe-area-inset-bottom),16px)]'
 
-const scripture = ref('')
+const verses = ref<Verse[]>([])
 const isScriptureLoading = ref(false)
 let activeFetchToken = 0
+
+const scripture = computed(() => formatVerses(verses.value, isVerseNumbersShown.value))
 
 const isAnyLoading = computed(() => (
   isScriptureLoading.value
   || bulkEntryStates.value.some(e => e.loading)
 ))
 
-async function fetchEntry(url: string, withVerses: boolean): Promise<string> {
+async function fetchEntry(url: string): Promise<Verse[]> {
   try {
-    const data = await $fetch<{ description: string | null }>('/api/scripture', {
-      query: { url, mode: withVerses ? 'verses' : 'meta' }
+    const data = await $fetch<{ verses: Verse[] }>('/api/scripture', {
+      query: { url }
     })
-    return data.description ?? ''
+    return data.verses ?? []
   } catch {
-    return ''
+    return []
   }
 }
 
@@ -188,24 +188,23 @@ watch(
   () => [
     isResultModalOpen.value,
     resultURL.value,
-    bulkResultEntries.value,
-    isVerseNumbersShown.value
+    bulkResultEntries.value
   ] as const,
-  ([open, url, bulk, withVerses]) => {
+  ([open, url, bulk]) => {
     const token = ++activeFetchToken
-    scripture.value = ''
+    verses.value = []
     isScriptureLoading.value = false
     bulkEntryStates.value = []
     if (!open) return
 
     if (bulk.length > 0) {
-      bulkEntryStates.value = bulk.map(b => ({ label: b.label, text: '', loading: true }))
+      bulkEntryStates.value = bulk.map(b => ({ label: b.label, verses: [], loading: true }))
       bulk.forEach((entry, i) => {
-        fetchEntry(entry.url, withVerses).then((text) => {
+        fetchEntry(entry.url).then((fetched) => {
           if (token !== activeFetchToken) return
           const state = bulkEntryStates.value[i]
           if (!state) return
-          state.text = text
+          state.verses = fetched
           state.loading = false
         })
       })
@@ -214,9 +213,9 @@ watch(
 
     if (!url) return
     isScriptureLoading.value = true
-    fetchEntry(url, withVerses)
-      .then((text) => {
-        if (token === activeFetchToken) scripture.value = text
+    fetchEntry(url)
+      .then((fetched) => {
+        if (token === activeFetchToken) verses.value = fetched
       })
       .finally(() => {
         if (token === activeFetchToken) isScriptureLoading.value = false
@@ -235,7 +234,10 @@ async function copyURLOnly() {
 function buildShareText() {
   if (isBulkMode.value) {
     return bulkEntryStates.value
-      .map(e => (e.text ? `${e.label}\n${e.text}` : e.label))
+      .map((e) => {
+        const text = formatVerses(e.verses, isVerseNumbersShown.value)
+        return text ? `${e.label}\n${text}` : e.label
+      })
       .join('\n\n')
   }
   if (!resultURL.value) return ''

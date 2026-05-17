@@ -1,5 +1,3 @@
-const META_DESCRIPTION = /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i
-
 const URL_PATTERN = /^https:\/\/www\.bible\.com\/bible\/(\d+)\/([A-Z0-9]+)\.(\d+)(?:\.(\d+)(?:-(\d+))?)?$/
 
 const VERSE_OPEN = /<span\b[^>]*\bdata-usfm="([^"]+)"[^>]*\bclass="[^"]*__verse"[^>]*>/g
@@ -126,53 +124,46 @@ function extractChapterVerses(html: string): Map<string, string[]> {
   return result
 }
 
-function assembleVerses(
+interface Verse {
+  number: number
+  text: string
+}
+
+function collectVerses(
   verses: Map<string, string[]>,
   prefix: string,
   range: { start: number, end: number } | null
-): string {
-  const items: Array<{ n: number, texts: string[] }> = []
+): Verse[] {
+  const items: Verse[] = []
   for (const [usfm, texts] of verses) {
     if (!usfm.startsWith(prefix + '.')) continue
     const tail = usfm.slice(prefix.length + 1)
     if (!/^\d+$/.test(tail)) continue
     const n = parseInt(tail, 10)
     if (range && ((n < range.start) || (n > range.end))) continue
-    items.push({ n, texts })
+    items.push({ number: n, text: texts.join(' ') })
   }
-  items.sort((a, b) => a.n - b.n)
-  if (items.length === 1) return items[0]!.texts.join(' ')
-  return items.map(({ n, texts }) => `${n} ${texts.join(' ')}`).join(' ')
+  items.sort((a, b) => a.number - b.number)
+  return items
 }
 
-async function fetchVerses(url: string): Promise<string | null> {
+async function fetchVerses(url: string): Promise<Verse[]> {
   const p = parseURL(url)
-  if (!p) return null
+  if (!p) return []
   const chapterURL = `https://www.bible.com/bible/${p.trId}/${p.book}.${p.chapter}`
   const html = await fetchHTML(chapterURL)
-  if (!html) return null
+  if (!html) return []
   const prefix = `${p.book}.${p.chapter}`
   const range = p.start
     ? { start: p.start, end: p.end ?? p.start }
     : null
-  const text = assembleVerses(extractChapterVerses(html), prefix, range)
-  return text || null
-}
-
-async function fetchMeta(url: string): Promise<string | null> {
-  const html = await fetchHTML(url)
-  if (!html) return null
-  const m = html.match(META_DESCRIPTION)
-  return m ? decodeEntities(m[1]!) : null
+  return collectVerses(extractChapterVerses(html), prefix, range)
 }
 
 export default defineEventHandler(async (event) => {
-  const { url, mode } = getQuery(event)
+  const { url } = getQuery(event)
   if ((typeof url !== 'string') || !url.startsWith('https://www.bible.com/')) {
-    return { description: null }
+    return { verses: [] as Verse[] }
   }
-  const description = mode === 'verses'
-    ? await fetchVerses(url)
-    : await fetchMeta(url)
-  return { description }
+  return { verses: await fetchVerses(url) }
 })
