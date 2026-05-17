@@ -13,7 +13,7 @@ export function useSettings() {
     sameSite: 'lax'
   })
 
-  const showVerseNumbers = useCookie<boolean>('bible_dial_verse_numbers', {
+  const isVerseNumbersShown = useCookie<boolean>('bible_dial_verse_numbers', {
     default: () => false,
     watch: true,
     sameSite: 'lax'
@@ -22,6 +22,6 @@ export function useSettings() {
   return {
     translationId,
     quickMode,
-    showVerseNumbers
+    isVerseNumbersShown
   }
 }

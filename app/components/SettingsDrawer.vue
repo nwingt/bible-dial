@@ -45,7 +45,7 @@
           :label="$t('settings_verse_numbers')"
           size="lg"
         >
-          <USwitch v-model="showVerseNumbers" />
+          <USwitch v-model="isVerseNumbersShown" />
         </UFormField>
 
         <UFormField
@@ -63,7 +63,7 @@
 import { TRANSLATIONS } from '~/constants/translations'
 
 const { isSettingsDrawerOpen } = useAppState()
-const { translationId, quickMode, showVerseNumbers } = useSettings()
+const { translationId, quickMode, isVerseNumbersShown } = useSettings()
 const { locale, locales, setLocale } = useI18n()
 
 const translationItems = computed(() =>

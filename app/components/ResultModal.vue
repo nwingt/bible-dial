@@ -144,7 +144,7 @@ const {
   bulkResultEntries,
   bulkEntryStates
 } = useAppState()
-const { translationId, showVerseNumbers } = useSettings()
+const { translationId, isVerseNumbersShown } = useSettings()
 
 const { copyURL, shareURL, openURL } = useVerseActions()
 const { t: $t } = useI18n()
@@ -189,7 +189,7 @@ watch(
     isResultModalOpen.value,
     resultURL.value,
     bulkResultEntries.value,
-    showVerseNumbers.value
+    isVerseNumbersShown.value
   ] as const,
   ([open, url, bulk, withVerses]) => {
     const token = ++activeFetchToken
